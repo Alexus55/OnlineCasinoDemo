@@ -39,7 +39,7 @@ const State = {
     splitHand: [],
     bet: 0,
     splitBet: 0,
-    phase: 'betting', // betting | playing | split-playing | dealer | done
+    phase: 'betting',
     playingSplit: false,
     wins: 0,
     losses: 0,
@@ -51,7 +51,6 @@ const State = {
 
 const SLOT_CONFIG = {
   classic: {
-    // Book of Ra style
     symbols: [
       { id: 'book',    emoji: '📖', weight: 2,  pays: [0,0,10,25,100], name: 'Book (Wild/Scatter)' },
       { id: 'pharaoh', emoji: '👑', weight: 4,  pays: [0,0,8,20,80],  name: 'Pharaoh' },
@@ -71,16 +70,16 @@ const SLOT_CONFIG = {
     freeSpinMultiplier: 3,
     lines: 10,
     linePatterns: [
-      [1,1,1,1,1], // middle row
-      [0,0,0,0,0], // top row
-      [2,2,2,2,2], // bottom row
-      [0,1,2,1,0], // V shape
-      [2,1,0,1,2], // inverted V
-      [1,0,1,0,1], // zigzag top
-      [1,2,1,2,1], // zigzag bottom
-      [0,0,1,2,2], // diagonal down
-      [2,2,1,0,0], // diagonal up
-      [1,0,0,0,1], // U shape
+      [1,1,1,1,1],
+      [0,0,0,0,0],
+      [2,2,2,2,2],
+      [0,1,2,1,0],
+      [2,1,0,1,2],
+      [1,0,1,0,1],
+      [1,2,1,2,1],
+      [0,0,1,2,2],
+      [2,2,1,0,0],
+      [1,0,0,0,1],
     ]
   },
   fruit: {
@@ -142,7 +141,7 @@ const SLOT_CONFIG = {
 // ============ UTILITY FUNCTIONS ============
 
 function fmt(amount) {
-  return amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  return amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' \u20AC';
 }
 
 function loadState() {
@@ -185,7 +184,6 @@ function showSection(name) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
 
-  // Find matching nav button
   document.querySelectorAll('.nav-btn').forEach(btn => {
     if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + name + "'")) {
       btn.classList.add('active');
@@ -212,7 +210,6 @@ function weightedRandom(symbols) {
 
 function generateReelStrip(config, reelIndex) {
   const strip = [];
-  // Add extra symbols above and below for animation
   for (let i = 0; i < 20; i++) {
     strip.push(weightedRandom(config.symbols));
   }
@@ -220,7 +217,6 @@ function generateReelStrip(config, reelIndex) {
 }
 
 function getReelSymbols(config) {
-  // Generate 5 reels × 5 rows (3 visible + padding)
   const reels = [];
   for (let r = 0; r < 5; r++) {
     const reel = [];
@@ -234,7 +230,6 @@ function getReelSymbols(config) {
 
 function initSlot(game) {
   const config = SLOT_CONFIG[game];
-  // Render initial reels
   for (let r = 0; r < 5; r++) {
     const reelEl = document.getElementById(game + '-reel-' + r);
     if (!reelEl) continue;
@@ -266,7 +261,7 @@ function buildPaytable(game) {
     item.className = 'paytable-item';
     item.innerHTML = `
       <div class="paytable-symbols">${sym.emoji}${sym.emoji}${sym.emoji}</div>
-      <div class="paytable-mult">×${sym.pays[2]}</div>
+      <div class="paytable-mult">\u00D7${sym.pays[2]}</div>
       <div class="paytable-desc">${sym.name}</div>
     `;
     grid.appendChild(item);
@@ -303,9 +298,8 @@ async function spin(game) {
 
   if (s.spinning) return;
 
-  const totalBet = s.bet * 10; // 10 lines
+  const totalBet = s.bet * 10;
 
-  // Check free spins
   const isFreeSpinRound = game === 'classic' && s.freeSpins > 0;
 
   if (!isFreeSpinRound) {
@@ -317,7 +311,6 @@ async function spin(game) {
     updateAllBalances();
   }
 
-  // Add to jackpot (luxury only)
   if (game === 'luxury') {
     State.jackpot += totalBet * 0.05;
     document.getElementById('jackpot-amount').textContent = fmt(State.jackpot);
@@ -329,14 +322,12 @@ async function spin(game) {
   spinBtn.classList.add('spinning');
   spinBtn.textContent = '...';
 
-  // Clear win indicators
   document.getElementById(game + '-win-lines').innerHTML = '';
 
   if (game === 'fruit') {
     document.getElementById('fruit-wild-banner').style.display = 'none';
   }
 
-  // Generate result
   const reelResults = [];
   for (let r = 0; r < 5; r++) {
     const col = [];
@@ -346,10 +337,8 @@ async function spin(game) {
     reelResults.push(col);
   }
 
-  // Animate reels
   await animateReels(game, reelResults);
 
-  // Check for expanding wild (fruit)
   let expandedReels = null;
   if (game === 'fruit' && config.expandingWild) {
     expandedReels = checkExpandingWild(reelResults, config);
@@ -361,7 +350,6 @@ async function spin(game) {
 
   const finalReels = expandedReels || reelResults;
 
-  // Check for scatter / free spins (classic)
   if (game === 'classic') {
     const scatterCount = countSymbol(finalReels, config.scatter);
     if (scatterCount >= config.scatterCount && s.freeSpins === 0) {
@@ -371,7 +359,7 @@ async function spin(game) {
       document.getElementById('classic-freespins-display').style.display = 'flex';
       document.getElementById('classic-freespins-count').textContent = s.freeSpins;
       document.getElementById('classic-freespins-multi').textContent = s.freeSpinMultiplier;
-      showNotification('🎁 FREISPIELE! ' + s.freeSpins + ' Gratis-Spiele mit ×' + s.freeSpinMultiplier, 'success');
+      showNotification('\uD83C\uDF81 FREISPIELE! ' + s.freeSpins + ' Gratis-Spiele mit \u00D7' + s.freeSpinMultiplier, 'success');
     } else if (isFreeSpinRound) {
       s.freeSpins--;
       document.getElementById('classic-freespins-count').textContent = s.freeSpins;
@@ -382,7 +370,6 @@ async function spin(game) {
     }
   }
 
-  // Calculate wins
   const { totalWin, winLines } = calculateWin(finalReels, config, s.bet);
 
   let multiplier = 1;
@@ -392,12 +379,9 @@ async function spin(game) {
 
   const finalWin = totalWin * multiplier;
 
-  // Jackpot check (luxury: 5 diamonds)
   if (game === 'luxury') {
-    const allDiamonds = finalReels.every(col => col.some(sym => sym.id === 'diamond'));
     const middleDiamonds = finalReels.every(col => col[1].id === 'diamond');
     if (middleDiamonds) {
-      // JACKPOT!
       await delay(500);
       const jackpotWin = State.jackpot;
       State.balance += jackpotWin;
@@ -413,7 +397,6 @@ async function spin(game) {
     }
   }
 
-  // Apply win
   if (finalWin > 0) {
     State.balance += finalWin;
     updateAllBalances();
@@ -441,14 +424,12 @@ function countSymbol(reels, symId) {
 }
 
 function checkExpandingWild(reels, config) {
-  // If any middle row symbol is wild, expand that reel
   let hasWild = false;
   for (let r = 0; r < 5; r++) {
     if (reels[r][1].id === config.wild) { hasWild = true; break; }
   }
   if (!hasWild) return null;
 
-  // Clone and expand wilds to full reels
   const expanded = reels.map((col, r) => {
     if (col[1].id === config.wild || col.some(s => s.id === config.wild)) {
       return col.map(() => config.symbols.find(s => s.id === config.wild));
@@ -480,7 +461,6 @@ function calculateWin(reels, config, bet) {
   config.linePatterns.forEach((pattern, lineIndex) => {
     const line = pattern.map((row, col) => reels[col][row]);
 
-    // Find longest matching sequence from left
     const first = line[0];
     let count = 1;
 
@@ -493,14 +473,12 @@ function calculateWin(reels, config, bet) {
       }
     }
 
-    // Get actual symbol (could be wild)
     let matchSym = first;
     if (first.id === config.wild) {
-      // find first non-wild
       for (const s of line) {
         if (s.id !== config.wild) { matchSym = s; break; }
       }
-      if (matchSym.id === config.wild) matchSym = first; // all wild
+      if (matchSym.id === config.wild) matchSym = first;
     }
 
     if (count >= 3) {
@@ -517,7 +495,6 @@ function calculateWin(reels, config, bet) {
 }
 
 function markWinningSymbols(game, reels, winLines, config) {
-  // Clear previous
   for (let r = 0; r < 5; r++) {
     const reelEl = document.getElementById(game + '-reel-' + r);
     reelEl.querySelectorAll('.reel-symbol').forEach(el => el.classList.remove('winning'));
@@ -538,7 +515,7 @@ function showWinLines(game, winLines) {
   winLines.forEach(wl => {
     const badge = document.createElement('div');
     badge.className = 'win-line-badge';
-    badge.textContent = wl.sym.emoji + ' ×' + wl.count + ' → ' + fmt(wl.win);
+    badge.textContent = wl.sym.emoji + ' \u00D7' + wl.count + ' \u2192 ' + fmt(wl.win);
     container.appendChild(badge);
   });
 }
@@ -546,10 +523,10 @@ function showWinLines(game, winLines) {
 function updateLastWin(game, amount, isMultiplied) {
   const el = document.getElementById(game + '-last-win');
   if (amount > 0) {
-    el.textContent = 'Letzter Gewinn: ' + fmt(amount) + (isMultiplied ? ' (×3 Multiplikator!)' : '');
+    el.textContent = 'Letzter Gewinn: ' + fmt(amount) + (isMultiplied ? ' (\u00D73 Multiplikator!)' : '');
     el.className = 'last-win has-win';
   } else {
-    el.textContent = 'Letzter Gewinn: —';
+    el.textContent = 'Letzter Gewinn: \u2014';
     el.className = 'last-win';
   }
 }
@@ -570,7 +547,6 @@ async function animateReel(game, reelIndex, finalSymbols, delayMs) {
   const reelEl = document.getElementById(game + '-reel-' + reelIndex);
   reelEl.classList.add('reel-spinning');
 
-  // Fast-scroll effect: replace symbols rapidly
   const spinDuration = 400 + reelIndex * 150;
   const startTime = Date.now();
 
@@ -584,7 +560,6 @@ async function animateReel(game, reelIndex, finalSymbols, delayMs) {
 
       if (Date.now() - startTime >= spinDuration) {
         clearInterval(interval);
-        // Set final symbols
         cells.forEach((cell, row) => {
           if (finalSymbols[row]) {
             cell.textContent = finalSymbols[row].emoji;
@@ -610,9 +585,9 @@ function showBigWin(amount) {
   const amountEl = document.getElementById('win-overlay-amount');
   const coins = document.getElementById('win-coins');
 
-  title.textContent = amount >= 50 ? 'MEGA GEWINN! 🎉' : 'GEWINN!';
+  title.textContent = amount >= 50 ? 'MEGA GEWINN! \uD83C\uDF89' : 'GEWINN!';
   amountEl.textContent = fmt(amount);
-  coins.textContent = '🪙🪙🪙🪙🪙';
+  coins.textContent = '\uD83E\uDE99\uD83E\uDE99\uD83E\uDE99\uD83E\uDE99\uD83E\uDE99';
 
   overlay.style.display = 'flex';
   setTimeout(() => {
@@ -630,7 +605,6 @@ function closeJackpot() {
 }
 
 function showNotification(msg, type = 'info') {
-  // Simple toast
   const toast = document.createElement('div');
   toast.style.cssText = `
     position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
@@ -647,7 +621,7 @@ function showNotification(msg, type = 'info') {
 
 // ============ BLACKJACK ============
 
-const SUITS = ['♠', '♥', '♦', '♣'];
+const SUITS = ['\u2660', '\u2665', '\u2666', '\u2663'];
 const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
 function createDeck() {
@@ -657,7 +631,6 @@ function createDeck() {
       deck.push({ rank, suit, hidden: false });
     }
   }
-  // Shuffle multiple decks (6 deck shoe)
   const shoe = [];
   for (let d = 0; d < 6; d++) shoe.push(...deck.map(c => ({...c})));
   return shuffleDeck(shoe);
@@ -732,7 +705,7 @@ function newBlackjackGame() {
   showBJSection('betting');
   document.getElementById('bj-result').style.display = 'none';
   document.getElementById('split-hand-area').style.display = 'none';
-  document.getElementById('bj-bet-display').textContent = '0,00 €';
+  document.getElementById('bj-bet-display').textContent = '0,00 \u20AC';
   document.getElementById('deal-btn').disabled = true;
   document.getElementById('dealer-score-label').textContent = '';
   document.getElementById('player-score-label').textContent = '';
@@ -755,7 +728,7 @@ function placeBet(amount) {
 
 function clearBet() {
   State.blackjack.bet = 0;
-  document.getElementById('bj-bet-display').textContent = '0,00 €';
+  document.getElementById('bj-bet-display').textContent = '0,00 \u20AC';
   document.getElementById('deal-btn').disabled = true;
 }
 
@@ -770,7 +743,6 @@ function dealBlackjack() {
   State.balance -= bj.bet;
   updateAllBalances();
 
-  // Deal cards
   bj.playerHand = [drawCard(), drawCard()];
   bj.dealerHand = [drawCard(), { ...drawCard(), hidden: true }];
   bj.phase = 'playing';
@@ -778,13 +750,10 @@ function dealBlackjack() {
   renderBJHands();
   showBJSection('playing');
 
-  // Check for split
   const canSplit = bj.playerHand[0].rank === bj.playerHand[1].rank && State.balance >= bj.bet;
   document.getElementById('bj-split-btn').style.display = canSplit ? 'inline-block' : 'none';
 
-  // Check player blackjack
   if (isBlackjack(bj.playerHand)) {
-    // Reveal dealer
     bj.dealerHand[1].hidden = false;
     renderBJHands();
     if (isBlackjack(bj.dealerHand)) {
@@ -805,7 +774,6 @@ function bjHit() {
     renderBJHands();
     document.getElementById('split-score-label').textContent = '(' + handValue(bj.splitHand) + ')';
     if (isBust(bj.splitHand)) {
-      // Split hand bust, move back to check main
       bj.playingSplit = false;
       bjDealerPlay();
     } else if (handValue(bj.splitHand) === 21) {
@@ -875,7 +843,7 @@ function bjDouble() {
 function bjSplit() {
   const bj = State.blackjack;
   if (State.balance < bj.bet) {
-    showNotification('Nicht genug Guthaben für Split!', 'error');
+    showNotification('Nicht genug Guthaben f\u00FCr Split!', 'error');
     return;
   }
 
@@ -899,7 +867,6 @@ function bjDealerPlay() {
   bj.dealerHand[1].hidden = false;
   renderBJHands();
 
-  // Dealer draws to 17
   const playDealer = () => {
     if (handValue(bj.dealerHand) < 17) {
       setTimeout(() => {
@@ -922,7 +889,6 @@ function evaluateBlackjack() {
   const player = handValue(bj.playerHand);
   const dealerBust = isBust(bj.dealerHand);
 
-  // Main hand result
   let mainResult;
   if (isBust(bj.playerHand)) {
     mainResult = 'lose';
@@ -934,7 +900,6 @@ function evaluateBlackjack() {
     mainResult = 'lose';
   }
 
-  // Split hand result
   let splitResult = null;
   if (bj.splitHand.length > 0) {
     const split = handValue(bj.splitHand);
@@ -961,48 +926,46 @@ function endBlackjack(result, splitResult) {
   let msgClass = '';
 
   if (result === 'blackjack') {
-    totalPayout = bj.bet * 2.5; // BJ pays 3:2
-    msg = '🃏 BLACKJACK! +' + fmt(totalPayout - bj.bet);
+    totalPayout = bj.bet * 2.5;
+    msg = '\uD83C\uDCCF BLACKJACK! +' + fmt(totalPayout - bj.bet);
     msgClass = 'result-bj';
     bj.wins++;
   } else if (result === 'win') {
     totalPayout = bj.bet * 2;
-    msg = '✅ GEWONNEN! +' + fmt(bj.bet);
+    msg = '\u2705 GEWONNEN! +' + fmt(bj.bet);
     msgClass = 'result-win';
     bj.wins++;
   } else if (result === 'push') {
     totalPayout = bj.bet;
-    msg = '🤝 UNENTSCHIEDEN';
+    msg = '\uD83E\uDD1D UNENTSCHIEDEN';
     msgClass = 'result-push';
     bj.pushes++;
   } else if (result === 'bust') {
-    msg = '💥 BUST! -' + fmt(bj.bet);
+    msg = '\uD83D\uDCA5 BUST! -' + fmt(bj.bet);
     msgClass = 'result-lose';
     bj.losses++;
   } else {
-    msg = '❌ VERLOREN! -' + fmt(bj.bet);
+    msg = '\u274C VERLOREN! -' + fmt(bj.bet);
     msgClass = 'result-lose';
     bj.losses++;
   }
 
-  // Split hand payout
   if (splitResult === 'win') {
     totalPayout += bj.splitBet * 2;
-    msg += ' | SPLIT: ✅ +' + fmt(bj.splitBet);
+    msg += ' | SPLIT: \u2705 +' + fmt(bj.splitBet);
     bj.wins++;
   } else if (splitResult === 'push') {
     totalPayout += bj.splitBet;
-    msg += ' | SPLIT: 🤝';
+    msg += ' | SPLIT: \uD83E\uDD1D';
     bj.pushes++;
   } else if (splitResult === 'lose') {
-    msg += ' | SPLIT: ❌';
+    msg += ' | SPLIT: \u274C';
     bj.losses++;
   }
 
   State.balance += totalPayout;
   updateAllBalances();
 
-  // Show result
   const resultEl = document.getElementById('bj-result');
   resultEl.textContent = msg;
   resultEl.className = 'bj-result-banner ' + msgClass;
@@ -1012,7 +975,6 @@ function endBlackjack(result, splitResult) {
   updateBJScores();
   saveState();
 
-  // Update stats display
   document.getElementById('bj-wins').textContent = bj.wins;
   document.getElementById('bj-losses').textContent = bj.losses;
   document.getElementById('bj-pushes').textContent = bj.pushes;
@@ -1038,7 +1000,7 @@ function renderCards(containerId, hand) {
   container.innerHTML = '';
   hand.forEach(card => {
     const cardEl = document.createElement('div');
-    const isRed = card.suit === '♥' || card.suit === '♦';
+    const isRed = card.suit === '\u2665' || card.suit === '\u2666';
     const colorClass = isRed ? 'card-red' : 'card-black';
 
     if (card.hidden) {
@@ -1078,14 +1040,14 @@ function getFreeCredits() {
   State.balance += 100;
   updateAllBalances();
   showBigWin(100);
-  showNotification('🎁 +100€ Gratis-Spielgeld gutgeschrieben!', 'success');
+  showNotification('\uD83C\uDF81 +100\u20AC Gratis-Spielgeld gutgeschrieben!', 'success');
 }
 
 function buyCredits(amount) {
   State.balance += amount;
   updateAllBalances();
   showBigWin(amount);
-  showNotification('✅ +' + fmt(amount) + ' gutgeschrieben!', 'success');
+  showNotification('\u2705 +' + fmt(amount) + ' gutgeschrieben!', 'success');
 }
 
 // ============ INIT ============
@@ -1094,21 +1056,17 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   updateAllBalances();
 
-  // Init slots pre-load reels
   ['classic', 'fruit', 'luxury'].forEach(game => initSlot(game));
 
-  // Init Blackjack
   State.blackjack.deck = createDeck();
   showBJSection('betting');
 
-  // Jackpot ticker
   setInterval(() => {
     State.jackpot += 0.01;
     const el = document.getElementById('jackpot-amount');
     if (el) el.textContent = fmt(State.jackpot);
   }, 3000);
 
-  // Keyboard support: Space = Spin on active slot
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
       e.preventDefault();
