@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALEXUS CASINO</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">♠</span>
+      <span class="logo-text">ALEXUS<span class="logo-accent">CASINO</span></span>
+      <span class="logo-icon">♦</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" onclick="showSection('home')">🏠 Home</button>
+      <button class="nav-btn" onclick="showSection('classic')">📜 Classic Slots</button>
+      <button class="nav-btn" onclick="showSection('fruit')">🍒 Fruit Slots</button>
+      <button class="nav-btn" onclick="showSection('luxury')">💎 Luxury Slots</button>
+      <button class="nav-btn" onclick="showSection('blackjack')">🃏 Blackjack</button>
+      <button class="nav-btn shop-btn" onclick="showSection('shop')">🛒 Shop</button>
+    </nav>
+    <div class="balance-display">
+      <span class="balance-label">GUTHABEN</span>
+      <span class="balance-amount" id="header-balance">100,00 €</span>
+    </div>
+  </div>
+</header>
+
+<!-- HOME SECTION -->
+<section id="section-home" class="section active">
+  <div class="home-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Willkommen im<br><span class="gradient-text">ALEXUS CASINO</span></h1>
+      <p class="hero-sub">Erlebe das ultimative Casino-Erlebnis mit Premium-Spielen</p>
+      <div class="hero-balance-card">
+        <div class="hero-balance-label">Dein aktuelles Guthaben</div>
+        <div class="hero-balance-amount" id="home-balance">100,00 €</div>
+      </div>
+    </div>
+    <div class="game-cards">
+      <div class="game-card" onclick="showSection('classic')">
+        <div class="game-card-icon">📜</div>
+        <div class="game-card-title">Classic Slots</div>
+        <div class="game-card-desc">5 Walzen · Book of Ra Stil</div>
+        <div class="game-card-bet">0,20€ – 5€</div>
+        <button class="game-card-btn">Jetzt spielen</button>
+      </div>
+      <div class="game-card" onclick="showSection('fruit')">
+        <div class="game-card-icon">🍒</div>
+        <div class="game-card-title">Fruit Slots</div>
+        <div class="game-card-desc">5 Walzen · Expanding Wilds</div>
+        <div class="game-card-bet">0,20€ – 5€</div>
+        <button class="game-card-btn">Jetzt spielen</button>
+      </div>
+      <div class="game-card jackpot-card" onclick="showSection('luxury')">
+        <div class="jackpot-badge">JACKPOT</div>
+        <div class="game-card-icon">💎</div>
+        <div class="game-card-title">Luxury Slots</div>
+        <div class="game-card-desc">5 Walzen · Progressive Jackpot</div>
+        <div class="game-card-bet">0,20€ – 10€</div>
+        <button class="game-card-btn">Jetzt spielen</button>
+      </div>
+      <div class="game-card" onclick="showSection('blackjack')">
+        <div class="game-card-icon">🃏</div>
+        <div class="game-card-title">Blackjack</div>
+        <div class="game-card-desc">Klassisch gegen Dealer</div>
+        <div class="game-card-bet">1€ – 50€</div>
+        <button class="game-card-btn">Jetzt spielen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLASSIC SLOTS -->
+<section id="section-classic" class="section">
+  <div class="slot-machine-wrapper">
+    <div class="slot-header">
+      <h2 class="slot-title">📜 Classic Slots</h2>
+      <div class="slot-subtitle">Book of Adventure</div>
+    </div>
+    <div class="jackpot-display classic-jackpot" id="classic-freespins-display" style="display:none;">
+      <span class="jackpot-label">🎁 FREISPIELE AKTIV</span>
+      <span class="jackpot-amount" id="classic-freespins-count">10</span>
+      <span class="jackpot-label">x<span id="classic-freespins-multi">3</span> Multiplikator</span>
+    </div>
+    <div class="slot-reels" id="classic-reels">
+      <div class="reel-container">
+        <div class="reel" id="classic-reel-0"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="classic-reel-1"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="classic-reel-2"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="classic-reel-3"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="classic-reel-4"></div>
+      </div>
+    </div>
+    <div class="win-lines-indicator" id="classic-win-lines"></div>
+    <div class="slot-controls">
+      <div class="bet-control">
+        <label>EINSATZ</label>
+        <div class="bet-buttons">
+          <button class="bet-btn" onclick="changeBet('classic', -1)">−</button>
+          <span class="bet-amount" id="classic-bet">0,20 €</span>
+          <button class="bet-btn" onclick="changeBet('classic', 1)">+</button>
+        </div>
+        <div class="bet-presets">
+          <button onclick="setBet('classic', 0.20)">0,20</button>
+          <button onclick="setBet('classic', 0.50)">0,50</button>
+          <button onclick="setBet('classic', 1.00)">1,00</button>
+          <button onclick="setBet('classic', 2.00)">2,00</button>
+          <button onclick="setBet('classic', 5.00)">5,00</button>
+        </div>
+      </div>
+      <div class="spin-area">
+        <button class="spin-btn" id="classic-spin-btn" onclick="spin('classic')">SPIN</button>
+        <div class="last-win" id="classic-last-win">Letzter Gewinn: —</div>
+      </div>
+      <div class="slot-info">
+        <div class="info-item">
+          <span class="info-label">LINIEN</span>
+          <span class="info-val">10</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">GESAMT</span>
+          <span class="info-val" id="classic-total-bet">2,00 €</span>
+        </div>
+      </div>
+    </div>
+    <div class="paytable">
+      <h3>Gewinntabelle</h3>
+      <div class="paytable-grid" id="classic-paytable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FRUIT SLOTS -->
+<section id="section-fruit" class="section">
+  <div class="slot-machine-wrapper fruit-theme">
+    <div class="slot-header">
+      <h2 class="slot-title">🍒 Fruit Slots</h2>
+      <div class="slot-subtitle">Lucky Fruits</div>
+    </div>
+    <div class="wild-banner" id="fruit-wild-banner" style="display:none;">
+      ⭐ EXPANDING WILD AKTIV! ⭐
+    </div>
+    <div class="slot-reels" id="fruit-reels">
+      <div class="reel-container">
+        <div class="reel" id="fruit-reel-0"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="fruit-reel-1"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="fruit-reel-2"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="fruit-reel-3"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="fruit-reel-4"></div>
+      </div>
+    </div>
+    <div class="win-lines-indicator" id="fruit-win-lines"></div>
+    <div class="slot-controls">
+      <div class="bet-control">
+        <label>EINSATZ</label>
+        <div class="bet-buttons">
+          <button class="bet-btn" onclick="changeBet('fruit', -1)">−</button>
+          <span class="bet-amount" id="fruit-bet">0,20 €</span>
+          <button class="bet-btn" onclick="changeBet('fruit', 1)">+</button>
+        </div>
+        <div class="bet-presets">
+          <button onclick="setBet('fruit', 0.20)">0,20</button>
+          <button onclick="setBet('fruit', 0.50)">0,50</button>
+          <button onclick="setBet('fruit', 1.00)">1,00</button>
+          <button onclick="setBet('fruit', 2.00)">2,00</button>
+          <button onclick="setBet('fruit', 5.00)">5,00</button>
+        </div>
+      </div>
+      <div class="spin-area">
+        <button class="spin-btn fruit-spin" id="fruit-spin-btn" onclick="spin('fruit')">SPIN</button>
+        <div class="last-win" id="fruit-last-win">Letzter Gewinn: —</div>
+      </div>
+      <div class="slot-info">
+        <div class="info-item">
+          <span class="info-label">LINIEN</span>
+          <span class="info-val">10</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">GESAMT</span>
+          <span class="info-val" id="fruit-total-bet">2,00 €</span>
+        </div>
+      </div>
+    </div>
+    <div class="paytable">
+      <h3>Gewinntabelle</h3>
+      <div class="paytable-grid" id="fruit-paytable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LUXURY SLOTS -->
+<section id="section-luxury" class="section">
+  <div class="slot-machine-wrapper luxury-theme">
+    <div class="slot-header">
+      <h2 class="slot-title">💎 Luxury Slots</h2>
+      <div class="slot-subtitle">Diamond Fortune</div>
+    </div>
+    <div class="jackpot-display">
+      <span class="jackpot-label">PROGRESSIVE JACKPOT</span>
+      <span class="jackpot-amount" id="jackpot-amount">0,00 €</span>
+    </div>
+    <div class="slot-reels" id="luxury-reels">
+      <div class="reel-container">
+        <div class="reel" id="luxury-reel-0"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="luxury-reel-1"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="luxury-reel-2"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="luxury-reel-3"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="luxury-reel-4"></div>
+      </div>
+    </div>
+    <div class="win-lines-indicator" id="luxury-win-lines"></div>
+    <div class="slot-controls">
+      <div class="bet-control">
+        <label>EINSATZ</label>
+        <div class="bet-buttons">
+          <button class="bet-btn" onclick="changeBet('luxury', -1)">−</button>
+          <span class="bet-amount" id="luxury-bet">0,20 €</span>
+          <button class="bet-btn" onclick="changeBet('luxury', 1)">+</button>
+        </div>
+        <div class="bet-presets">
+          <button onclick="setBet('luxury', 0.20)">0,20</button>
+          <button onclick="setBet('luxury', 1.00)">1,00</button>
+          <button onclick="setBet('luxury', 2.00)">2,00</button>
+          <button onclick="setBet('luxury', 5.00)">5,00</button>
+          <button onclick="setBet('luxury', 10.00)">10,00</button>
+        </div>
+      </div>
+      <div class="spin-area">
+        <button class="spin-btn luxury-spin" id="luxury-spin-btn" onclick="spin('luxury')">SPIN</button>
+        <div class="last-win" id="luxury-last-win">Letzter Gewinn: —</div>
+      </div>
+      <div class="slot-info">
+        <div class="info-item">
+          <span class="info-label">LINIEN</span>
+          <span class="info-val">10</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">GESAMT</span>
+          <span class="info-val" id="luxury-total-bet">2,00 €</span>
+        </div>
+      </div>
+    </div>
+    <div class="paytable">
+      <h3>Gewinntabelle</h3>
+      <div class="paytable-grid" id="luxury-paytable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLACKJACK -->
+<section id="section-blackjack" class="section">
+  <div class="blackjack-wrapper">
+    <div class="slot-header">
+      <h2 class="slot-title">🃏 Blackjack</h2>
+      <div class="slot-subtitle">Klassisches Casino Blackjack</div>
+    </div>
+
+    <div class="bj-table">
+      <div class="bj-dealer-area">
+        <div class="bj-area-label">DEALER <span id="dealer-score-label"></span></div>
+        <div class="bj-cards" id="dealer-cards"></div>
+      </div>
+
+      <div class="bj-result-banner" id="bj-result" style="display:none;"></div>
+
+      <div class="bj-player-area">
+        <div class="bj-area-label">SPIELER <span id="player-score-label"></span></div>
+        <div class="bj-cards" id="player-cards"></div>
+        <div class="bj-split-cards" id="split-hand-area" style="display:none;">
+          <div class="bj-area-label">SPLIT-HAND <span id="split-score-label"></span></div>
+          <div class="bj-cards" id="split-cards"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bj-controls">
+      <div class="bj-bet-section" id="bj-bet-section">
+        <div class="bj-bet-label">EINSATZ WÄHLEN (1€ – 50€)</div>
+        <div class="bj-chip-row">
+          <button class="chip chip-1" onclick="placeBet(1)">1€</button>
+          <button class="chip chip-5" onclick="placeBet(5)">5€</button>
+          <button class="chip chip-10" onclick="placeBet(10)">10€</button>
+          <button class="chip chip-25" onclick="placeBet(25)">25€</button>
+          <button class="chip chip-50" onclick="placeBet(50)">50€</button>
+        </div>
+        <div class="bj-current-bet">Aktueller Einsatz: <span id="bj-bet-display">0,00 €</span></div>
+        <div class="bj-bet-actions">
+          <button class="bj-action-btn" onclick="clearBet()">Einsatz löschen</button>
+          <button class="bj-action-btn deal-btn" onclick="dealBlackjack()" id="deal-btn" disabled>KARTEN GEBEN</button>
+        </div>
+      </div>
+
+      <div class="bj-action-section" id="bj-action-section" style="display:none;">
+        <div class="bj-action-buttons">
+          <button class="bj-action-btn" onclick="bjHit()">HIT</button>
+          <button class="bj-action-btn" onclick="bjStand()">STAND</button>
+          <button class="bj-action-btn" id="bj-double-btn" onclick="bjDouble()">DOUBLE DOWN</button>
+          <button class="bj-action-btn" id="bj-split-btn" onclick="bjSplit()" style="display:none;">SPLIT</button>
+        </div>
+      </div>
+
+      <div class="bj-new-game" id="bj-new-game" style="display:none;">
+        <button class="spin-btn" onclick="newBlackjackGame()">NEUES SPIEL</button>
+      </div>
+    </div>
+
+    <div class="bj-stats">
+      <div class="stat-item"><span class="stat-label">Gewonnen</span><span class="stat-val" id="bj-wins">0</span></div>
+      <div class="stat-item"><span class="stat-label">Verloren</span><span class="stat-val" id="bj-losses">0</span></div>
+      <div class="stat-item"><span class="stat-label">Unentschieden</span><span class="stat-val" id="bj-pushes">0</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="section-shop" class="section">
+  <div class="shop-wrapper">
+    <div class="slot-header">
+      <h2 class="slot-title">🛒 Casino Shop</h2>
+      <div class="slot-subtitle">Lade dein Guthaben auf</div>
+    </div>
+    <div class="shop-grid">
+      <div class="shop-item free-item">
+        <div class="shop-item-badge">GRATIS</div>
+        <div class="shop-item-icon">🎁</div>
+        <div class="shop-item-title">Gratis Spielgeld</div>
+        <div class="shop-item-amount">+ 100 €</div>
+        <div class="shop-item-desc">Unbegrenzt nutzbar · Sofort verfügbar</div>
+        <button class="shop-btn free-btn" onclick="getFreeCredits()">Gratis +100€ Spielgeld</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-item-icon">💰</div>
+        <div class="shop-item-title">Starter Paket</div>
+        <div class="shop-item-amount">+ 500 €</div>
+        <div class="shop-item-desc">Für einen großen Start</div>
+        <button class="shop-btn" onclick="buyCredits(500)">+ 500€ holen</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-item-icon">💎</div>
+        <div class="shop-item-title">VIP Paket</div>
+        <div class="shop-item-amount">+ 1.000 €</div>
+        <div class="shop-item-desc">Der VIP-Spieler</div>
+        <button class="shop-btn" onclick="buyCredits(1000)">+ 1.000€ holen</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-item-icon">👑</div>
+        <div class="shop-item-title">High Roller</div>
+        <div class="shop-item-amount">+ 5.000 €</div>
+        <div class="shop-item-desc">Für echte High Roller</div>
+        <button class="shop-btn premium-btn" onclick="buyCredits(5000)">+ 5.000€ holen</button>
+      </div>
+    </div>
+    <div class="shop-balance">
+      <div class="shop-balance-label">Dein Guthaben</div>
+      <div class="shop-balance-amount" id="shop-balance">100,00 €</div>
+    </div>
+  </div>
+</section>
+
+<!-- WIN ANIMATION OVERLAY -->
+<div class="win-overlay" id="win-overlay" style="display:none;">
+  <div class="win-overlay-content">
+    <div class="win-overlay-title" id="win-overlay-title">GEWINN!</div>
+    <div class="win-overlay-amount" id="win-overlay-amount"></div>
+    <div class="win-coins" id="win-coins"></div>
+  </div>
+</div>
+
+<!-- JACKPOT OVERLAY -->
+<div class="jackpot-overlay" id="jackpot-overlay" style="display:none;">
+  <div class="jackpot-overlay-content">
+    <div class="jackpot-overlay-title">🎰 JACKPOT! 🎰</div>
+    <div class="jackpot-overlay-sub">UNGLAUBLICH!</div>
+    <div class="jackpot-overlay-amount" id="jackpot-overlay-amount"></div>
+    <button onclick="closeJackpot()" class="spin-btn" style="margin-top:20px;">Weiter spielen</button>
+  </div>
+</div>
+
+<script src="casino.js"></script>
+</body>
+</html>
